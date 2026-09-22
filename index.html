@@ -208,7 +208,7 @@
           style: { color: "#FFD700", weight: 0.8, fill: false }
         }).addTo(map);
       })
-      .catch(err => console.error("Failed to load KT_PA.geojson:", err));
+      .catch(err => console.error("Failed to load KT_PA.geojson:", err));   
 
     /* =====================================================
        5) Polygon drawing + area calculation (ha)
@@ -234,7 +234,7 @@
 
       if (utm.length < 3) {
         document.getElementById("result").innerText =
-          "ត្រូវការយ៉ាងហោចណាស់ 3 ចំណុច";
+          "At Least 3 Points are included";
         return;
       }
 
@@ -249,7 +249,7 @@
       const ha = sqm / 10000;
 
       document.getElementById("result").innerText =
-        `ផ្ទៃដីសរុប: ${ha.toFixed(2)} ហិកតា`;
+        `ផ្ទៃដីសរុប: ${ha.toFixed(2)} Hectar`;
 
       polygonLayer = L.polygon(latlngs, { color: "blue", weight: 2 }).addTo(map);
       polygonLayer.bringToFront();
