@@ -9,7 +9,7 @@
 
   <style>
     body {
-      font-family: 'Khmer OS Siemreap', Arial, sans-serif;
+      font-family: 'Times New Roman', 'Khmer OS Siemreap', Arial, sans-serif;
       padding: 20px;
       max-width: 800px;
       margin: auto;
@@ -17,14 +17,14 @@
     }
 
     h2 {
-      font-family: 'Khmer OS Muol Light', 'Khmer OS Battambang', Arial, sans-serif;
+      font-family: 'Times New Roman', 'Khmer OS Muol Light', 'Khmer OS Battambang', Arial, sans-serif;
       text-align: center;
       margin-bottom: 10px;
       font-size: 24px;
     }
 
     .subtitle {
-      font-family: 'Khmer OS Siemreap', Arial, sans-serif;
+      font-family: 'Times New Roman', 'Khmer OS Siemreap', Arial, sans-serif;
       font-size: 14px;
       text-align: center;
       margin-top: -5px;
@@ -33,14 +33,14 @@
     }
 
     .instruction {
-      font-family: 'Khmer OS Siemreap', Arial, sans-serif;
+      font-family: 'Times New Roman', 'Khmer OS Siemreap', Arial, sans-serif;
       font-size: 16px;
       text-align: center;
       margin: 10px 0 15px;
       color: #333;
     }
 
-    /* ===== BOX LOOK (like your old nice one) ===== */
+    /* ===== BOX LOOK ===== */
     .table-container {
       width: 100%;
       overflow-x: hidden;
@@ -60,6 +60,7 @@
     }
 
     th, td {
+      font-family: 'Times New Roman', 'Khmer OS Siemreap', Arial, sans-serif;
       border: 1px solid #ccc;
       padding: 6px;
       text-align: center;
@@ -72,9 +73,10 @@
     }
 
     input[type="number"] {
+      font-family: 'Times New Roman', Arial, sans-serif;
       width: 100%;
-      padding: 10px;         /* restored */
-      font-size: 16px;       /* restored */
+      padding: 10px;         
+      font-size: 16px;       
       box-sizing: border-box;
       border: 1px solid #bbb;
       border-radius: 4px;
@@ -86,7 +88,7 @@
     }
 
     button {
-      font-family: 'Khmer OS Siemreap', Arial, sans-serif;
+      font-family: 'Times New Roman', 'Khmer OS Siemreap', Arial, sans-serif;
       width: 100%;
       padding: 12px;
       font-size: 18px;
@@ -101,7 +103,15 @@
       filter: brightness(0.95);
     }
 
+    .add-btn {
+      background: #28a745;
+      margin-top: 8px;
+      font-size: 16px;
+      padding: 8px;
+    }
+
     #result {
+      font-family: 'Times New Roman', 'Khmer OS Siemreap', Arial, sans-serif;
       margin-top: 10px;
       font-size: 18px;
       text-align: center;
@@ -131,13 +141,14 @@
     <table>
       <thead>
         <tr>
-          <th>ល.រ</th>
+          <th>ID</th>
           <th>X (Easting)</th>
           <th>Y (Northing)</th>
         </tr>
       </thead>
       <tbody id="coordTable"></tbody>
     </table>
+    <button type="button" class="add-btn" onclick="addRow()">+ Add Row</button>
   </div>
 
   <button onclick="calculateAndDraw()">Calculate</button>
@@ -150,23 +161,29 @@
 
   <script>
     /* =====================================================
-       1) Build coordinate input table
+        1) Build coordinate input table (Starts with 7 rows)
     ===================================================== */
-    const MAX_POINTS = 10;
     const table = document.getElementById("coordTable");
+    let rowCount = 0;
 
-    for (let i = 1; i <= MAX_POINTS; i++) {
+    function addRow() {
+      rowCount++;
       const row = document.createElement("tr");
       row.innerHTML = `
-        <td>${i}</td>
-        <td><input type="number" id="x${i}" step="any" placeholder="X ${i}"></td>
-        <td><input type="number" id="y${i}" step="any" placeholder="Y ${i}"></td>
+        <td>${rowCount}</td>
+        <td><input type="number" id="x${rowCount}" step="any" placeholder="X ${rowCount}"></td>
+        <td><input type="number" id="y${rowCount}" step="any" placeholder="Y ${rowCount}"></td>
       `;
       table.appendChild(row);
     }
 
+    // Initialize 7 default rows
+    for (let i = 0; i < 7; i++) {
+      addRow();
+    }
+
     /* =====================================================
-       2) Projection: UTM Zone 48N (WGS84)
+        2) Projection: UTM Zone 48N (WGS84)
     ===================================================== */
     proj4.defs(
       "UTM48N",
@@ -174,7 +191,7 @@
     );
 
     /* =====================================================
-       3) Map + Imagery basemap
+        3) Map + Imagery basemap
     ===================================================== */
     const map = L.map("map").setView([12.6, 106.0], 8);
 
@@ -187,31 +204,31 @@
     ).addTo(map);
 
     /* =====================================================
-       4) Load GeoJSON layers
+        4) Load GeoJSON layers
     ===================================================== */
 
-    // Kratie Boundary
-    fetch("Kratie_Boundary.geojson")
+    // District MDK
+    fetch("District_Boundary_MDK.geojson")
       .then(r => r.json())
       .then(data => {
         L.geoJSON(data, {
           style: { color: "#000000", weight: 2, fill: false }
         }).addTo(map);
       })
-      .catch(err => console.error("Failed to load Kratie_Boundary.geojson:", err));
+      .catch(err => console.error("Failed to load District_Boundary_MDK.geojson:", err));
 
-    // KT Protected Area
-    fetch("KT_PA.geojson")
+    // PPWS & SWS
+    fetch("SWS and PPWS Shapefile_updated.geojson")
       .then(r => r.json())
       .then(data => {
         L.geoJSON(data, {
           style: { color: "#FFD700", weight: 0.8, fill: false }
         }).addTo(map);
       })
-      .catch(err => console.error("Failed to load KT_PA.geojson:", err));   
+      .catch(err => console.error("Failed to load SWS and PPWS Shapefile_updated.geojson:", err));   
 
     /* =====================================================
-       5) Polygon drawing + area calculation (ha)
+        5) Polygon drawing + area calculation (ha)
     ===================================================== */
     let polygonLayer = null;
 
@@ -221,14 +238,19 @@
       const utm = [];
       const latlngs = [];
 
-      for (let i = 1; i <= MAX_POINTS; i++) {
-        const x = parseFloat(document.getElementById(`x${i}`).value);
-        const y = parseFloat(document.getElementById(`y${i}`).value);
+      for (let i = 1; i <= rowCount; i++) {
+        const xInput = document.getElementById(`x${i}`);
+        const yInput = document.getElementById(`y${i}`);
 
-        if (!isNaN(x) && !isNaN(y)) {
-          utm.push([x, y]);
-          const [lon, lat] = proj4("UTM48N", "WGS84", [x, y]);
-          latlngs.push([lat, lon]);
+        if (xInput && yInput) {
+          const x = parseFloat(xInput.value);
+          const y = parseFloat(yInput.value);
+
+          if (!isNaN(x) && !isNaN(y)) {
+            utm.push([x, y]);
+            const [lon, lat] = proj4("UTM48N", "WGS84", [x, y]);
+            latlngs.push([lat, lon]);
+          }
         }
       }
 
@@ -249,7 +271,7 @@
       const ha = sqm / 10000;
 
       document.getElementById("result").innerText =
-        `ផ្ទៃដីសរុប: ${ha.toFixed(2)} Hectar`;
+        `Total Area: ${ha.toFixed(2)} Hectar`;
 
       polygonLayer = L.polygon(latlngs, { color: "blue", weight: 2 }).addTo(map);
       polygonLayer.bringToFront();
